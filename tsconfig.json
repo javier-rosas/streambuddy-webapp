@@ -19,9 +19,9 @@
     ],
     "paths": {
       "@/*": ["./app/*"],
-      "@/components/*": ["./app/components/*"],
-      "@/images/*": ["./app/images/*"],
-      "@/styles/*": ["./app/globals.css"]
+      "@/components/*": ["./components/*"],
+      "@/images/*": ["./images/*"],
+      "@/styles/*": ["./styles/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

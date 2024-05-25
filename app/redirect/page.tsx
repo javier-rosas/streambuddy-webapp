@@ -1,4 +1,15 @@
+"use client";
+
+import { checkExtensionInstalled, checkUserIsLoggedIn } from "./utils";
+
+import { useEffect } from "react";
+
 export default function Redirect() {
+  useEffect(() => {
+    checkExtensionInstalled();
+    checkUserIsLoggedIn();
+  }, []);
+
   return (
     <div className="bg-white">
       {/* Header */}

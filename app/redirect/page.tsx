@@ -3,12 +3,37 @@
 import { checkExtensionInstalled, checkUserIsLoggedIn } from "./utils";
 
 import { useEffect } from "react";
+import { useExtractLinkFromUrl } from "@/hooks/useExtractLinkFromUrl";
+import { useRouter } from "next/navigation";
+
+declare const chrome: any;
 
 export default function Redirect() {
+  const router = useRouter();
+  const link = useExtractLinkFromUrl();
+
   useEffect(() => {
     checkExtensionInstalled();
     checkUserIsLoggedIn();
   }, []);
+
+  useEffect(() => {
+    if (!link) {
+      router.push("/not-found");
+    } else {
+      if (
+        typeof window !== "undefined" &&
+        typeof chrome !== "undefined" &&
+        chrome.runtime
+      ) {
+        chrome.runtime.sendMessage({ type: "startStream", link: link }, () => {
+          window.location.href = link; // Redirect to Netflix after sending the message
+        });
+      } else {
+        router.push("/open-in-chrome"); // Fallback redirection if chrome is not available
+      }
+    }
+  }, [link, router]);
 
   return (
     <div className="bg-white">
@@ -27,7 +52,6 @@ export default function Redirect() {
               />
             </a>
           </div>
-          <div>Hello</div>
         </nav>
       </header>
 
@@ -47,19 +71,18 @@ export default function Redirect() {
             />
           </div>
           <div className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-              Click the link to go to the party!
-            </h2>
+            {/* <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+              Click the button to go to the party!
+            </h2> */}
             <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-gray-600">
-              Incididunt sint fugiat pariatur cupidatat consectetur sit cillum
-              anim id veniam aliqua proident excepteur commodo do ea.
+              Kick back and enjoy the show
             </p>
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <a
                 href="#"
                 className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
-                Get started
+                Go to Party
               </a>
             </div>
           </div>

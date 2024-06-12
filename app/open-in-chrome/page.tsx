@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Logo } from "@/components/Logo";
 import { SlimLayout } from "@/components/SlimLayout";
 
-export default function NotFound() {
+export default function OpenInChrome() {
   return (
     <SlimLayout>
       <div className="flex">
@@ -11,13 +11,11 @@ export default function NotFound() {
           <Logo className="h-10 w-auto" />
         </Link>
       </div>
-      <p className="mt-20 text-sm font-medium text-gray-700">404</p>
+      <br />
       <h1 className="mt-3 text-lg font-semibold text-gray-900">
-        Session not found
+        Please open the link in Google Chrome
       </h1>
-      <p className="mt-3 text-sm text-gray-700">
-        Sorry, we couldn’t find the party you’re looking for.
-      </p>
+
       <Button href="/" className="mt-10">
         Go back home
       </Button>

@@ -30,8 +30,10 @@ export const checkExtensionInstalled = async () => {
 
   if (response) {
     console.log("Extension is installed");
+    return true;
   } else {
     console.log("Extension is not installed");
+    return false;
   }
 };
 
@@ -67,7 +69,9 @@ export const checkUserIsLoggedIn = async () => {
 
   if (response) {
     console.log("User is logged in");
+    return true;
   } else {
     console.log("User is not logged in");
+    return false;
   }
 };

@@ -13,26 +13,36 @@ export default function Redirect() {
   const link = useExtractLinkFromUrl();
 
   useEffect(() => {
-    checkExtensionInstalled();
-    checkUserIsLoggedIn();
-  }, []);
-
-  useEffect(() => {
-    if (!link) {
-      router.push("/not-found");
-    } else {
-      if (
-        typeof window !== "undefined" &&
-        typeof chrome !== "undefined" &&
-        chrome.runtime
-      ) {
-        chrome.runtime.sendMessage({ type: "startStream", link: link }, () => {
-          window.location.href = link; // Redirect to Netflix after sending the message
-        });
+    const checkConditionsAndRedirect = async () => {
+      if (!link) {
+        router.push("/not-found");
       } else {
-        router.push("/open-in-chrome"); // Fallback redirection if chrome is not available
+        if (
+          typeof window !== "undefined" &&
+          typeof chrome !== "undefined" &&
+          chrome.runtime
+        ) {
+          const isExtensionInstalled = await checkExtensionInstalled();
+          const isUserLoggedIn = await checkUserIsLoggedIn();
+
+          if (isExtensionInstalled && isUserLoggedIn) {
+            chrome.runtime.sendMessage(
+              { type: "startStream", link: link },
+              () => {
+                window.location.href = link; // Redirect to Netflix after sending the message
+              }
+            );
+          } else {
+            // Handle the case where either the extension is not installed or the user is not logged in
+            // For example, you might want to show a message or redirect to a different page
+          }
+        } else {
+          router.push("/open-in-chrome"); // Fallback redirection if chrome is not available
+        }
       }
-    }
+    };
+
+    checkConditionsAndRedirect();
   }, [link, router]);
 
   return (

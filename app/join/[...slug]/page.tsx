@@ -1,20 +1,20 @@
 "use client";
 
-import { checkExtensionInstalled, checkUserIsLoggedIn } from "./utils";
+import { checkExtensionInstalled, checkUserIsLoggedIn } from "../utils";
 
 import { useEffect } from "react";
-import { useExtractLinkFromUrl } from "@/hooks/useExtractLinkFromUrl";
 import { useRouter } from "next/navigation";
 
 declare const chrome: any;
 
-export default function Redirect() {
+export default function Redirect({ params }: { params: { slug: string } }) {
   const router = useRouter();
-  const link = useExtractLinkFromUrl();
+  const platformUrl = params.slug[0];
+  const sessionCode = params.slug[1];
 
   useEffect(() => {
     const checkConditionsAndRedirect = async () => {
-      if (!link) {
+      if (!sessionCode || !platformUrl) {
         router.push("/not-found");
       } else {
         if (
@@ -26,12 +26,8 @@ export default function Redirect() {
           const isUserLoggedIn = await checkUserIsLoggedIn();
 
           if (isExtensionInstalled && isUserLoggedIn) {
-            chrome.runtime.sendMessage(
-              { type: "startStream", link: link },
-              () => {
-                window.location.href = link; // Redirect to Netflix after sending the message
-              }
-            );
+            const redirectUrl = `https://${platformUrl}/browse?code=${sessionCode}`;
+            window.location.href = redirectUrl; // Redirect to Netflix after sending the message
           } else {
             // Handle the case where either the extension is not installed or the user is not logged in
             // For example, you might want to show a message or redirect to a different page
@@ -43,7 +39,7 @@ export default function Redirect() {
     };
 
     checkConditionsAndRedirect();
-  }, [link, router]);
+  }, [platformUrl, sessionCode, router]);
 
   return (
     <div className="bg-white">
